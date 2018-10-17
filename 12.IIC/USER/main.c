@@ -31,6 +31,7 @@ int main(void)
 	AT24CXX_Read(0,datatemp,SIZE);
 	while(1)
 	{
+
 		printf("%s", datatemp);
 		delay_ms(1000);
 	}

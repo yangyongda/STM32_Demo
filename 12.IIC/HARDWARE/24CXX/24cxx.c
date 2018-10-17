@@ -24,7 +24,7 @@ u8 AT24CXX_ReadOneByte(u16 ReadAddr)
 	}else IIC_Send_Byte(0XA0+((ReadAddr/256)<<1));   //发送器件地址0XA0,写数据 	 
 
 	IIC_Wait_Ack(); 
-    IIC_Send_Byte(ReadAddr%256);   //发送低地址
+  IIC_Send_Byte(ReadAddr%256);   //发送低地址
 	IIC_Wait_Ack();	    
 	IIC_Start();  	 	   
 	IIC_Send_Byte(0XA1);           //进入接收模式			   
