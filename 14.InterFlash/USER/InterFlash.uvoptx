@@ -22,7 +22,7 @@
   </DaveTm>
 
   <Target>
-    <TargetName>SPI</TargetName>
+    <TargetName>InterFlash</TargetName>
     <ToolsetNumber>0x4</ToolsetNumber>
     <ToolsetName>ARM-ADS</ToolsetName>
     <TargetOption>
@@ -196,7 +196,7 @@
 
   <Group>
     <GroupName>USER</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -243,7 +243,7 @@
 
   <Group>
     <GroupName>HARDWARE</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -255,8 +255,8 @@
       <Focus>0</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\HARDWARE\SPI\spi.c</PathWithFileName>
-      <FilenameWithoutPath>spi.c</FilenameWithoutPath>
+      <PathWithFileName>..\HARDWARE\STMFLASH\stmflash.c</PathWithFileName>
+      <FilenameWithoutPath>stmflash.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -264,7 +264,7 @@
 
   <Group>
     <GroupName>SYSTEM</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -422,8 +422,8 @@
       <Focus>0</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\STM32F10x_FWLib\src\stm32f10x_spi.c</PathWithFileName>
-      <FilenameWithoutPath>stm32f10x_spi.c</FilenameWithoutPath>
+      <PathWithFileName>..\STM32F10x_FWLib\src\stm32f10x_flash.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f10x_flash.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

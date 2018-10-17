@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>SPI</TargetName>
+      <TargetName>InterFlash</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>5060020::V5.06 (build 20)::ARMCC</pCCUsed>
@@ -48,7 +48,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>..\OBJ\</OutputDirectory>
-          <OutputName>SPI</OutputName>
+          <OutputName>InterFlash</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -373,7 +373,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\USER;..\CORE;..\STM32F10x_FWLib\inc;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HARDWARE\SPI</IncludePath>
+              <IncludePath>..\USER;..\CORE;..\STM32F10x_FWLib\inc;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HARDWARE\STMFLASH</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -437,9 +437,9 @@
           <GroupName>HARDWARE</GroupName>
           <Files>
             <File>
-              <FileName>spi.c</FileName>
+              <FileName>stmflash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\HARDWARE\SPI\spi.c</FilePath>
+              <FilePath>..\HARDWARE\STMFLASH\stmflash.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -507,9 +507,9 @@
               <FilePath>..\STM32F10x_FWLib\src\stm32f10x_usart.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f10x_spi.c</FileName>
+              <FileName>stm32f10x_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\STM32F10x_FWLib\src\stm32f10x_spi.c</FilePath>
+              <FilePath>..\STM32F10x_FWLib\src\stm32f10x_flash.c</FilePath>
             </File>
           </Files>
         </Group>
