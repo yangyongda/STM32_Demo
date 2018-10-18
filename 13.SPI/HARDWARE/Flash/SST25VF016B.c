@@ -1,13 +1,32 @@
 #include "SST25VF016B.h"
 #include"delay.h"
+
+
+//初始化SPI FLASH的IO口
+void SST25VF16B_Init(void)
+{	
+  GPIO_InitTypeDef GPIO_InitStructure;
+	RCC_APB2PeriphClockCmd(	RCC_APB2Periph_GPIOE, ENABLE );//PORTE时钟使能 
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;  // PE6 推挽 
+ 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //推挽输出
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+ 	GPIO_Init(GPIOE, &GPIO_InitStructure);
+ 	GPIO_SetBits(GPIOE,GPIO_Pin_6);
+ 
+  SST25VFXX_CS=1;				//SPI FLASH不选中
+	SPI1_Init();		   	//初始化SPI
+	SPI1_SetSpeed(SPI_BaudRatePrescaler_2);//设置为18M时钟,高速模式
+
+} 
+
 //读取状态寄存器(05h)
 u8 Read_Status(void)
 {
 	u8 dt;
-	SPI_FLASH_L;  //自定义宏 ,开始SPI通信
-	SPI_SendByte(0x05);	//发送指令
-	dt=SPI_SendByte(0);
-	SPI_FLASH_H;
+	SST25VFXX_CS = 0;  //自定义宏 ,开始SPI通信
+	dt = SPI1_ReadWriteByte(0x05);	//发送指令,并返回数据
+	SST25VFXX_CS = 1;
 	return dt;
 }
 
@@ -15,30 +34,30 @@ u8 Read_Status(void)
 
 void WriteStatus_Enable(void)
 {
-	SPI_FLASH_L;
-	SPI_SendByte(0x50);
-	SPI_FLASH_H;
-	SPI_FLASH_L;
-	SPI_SendByte(0x01);
-	SPI_SendByte(0);	
-	SPI_FLASH_H;
+	SST25VFXX_CS = 0;
+	SPI1_ReadWriteByte(0x50);
+	SST25VFXX_CS = 1;
+	SST25VFXX_CS = 0;
+	SPI1_ReadWriteByte(0x01);
+	SPI1_ReadWriteByte(0);	
+	SST25VFXX_CS = 1;
 	Check_Busy();
 }
 
 //写使能
 void WriteEnable(void)
 {
-	SPI_FLASH_L;
-	SPI_SendByte(0x06);
-	SPI_FLASH_H;	
+	SST25VFXX_CS = 0;
+	SPI1_ReadWriteByte(0x06);
+	SST25VFXX_CS = 1;	
 }
 
 //写禁止
 void WriteDisable(void)
 {
-    SPI_FLASH_L;
-	SPI_SendByte(0x04);
-	SPI_FLASH_H;
+  SST25VFXX_CS = 0;
+	SPI1_ReadWriteByte(0x04);
+	SST25VFXX_CS = 1;
 	Check_Busy();
 }
 //忙检测
@@ -46,21 +65,22 @@ void Check_Busy(void)
 {
 	while((Read_Status()&0x01)==1) ;
 }
+
 //读器件ID
 u16 Read_DeviceID(void)
 {
 	u16 id=0;
 
-	SPI_FLASH_L;
-	SPI_SendByte(0x90);
-	SPI_SendByte(0);
-	SPI_SendByte(0);
-	SPI_SendByte(0);
+	SST25VFXX_CS = 0;
+	SPI1_ReadWriteByte(0x90);
+	SPI1_ReadWriteByte(0);
+	SPI1_ReadWriteByte(0);
+	SPI1_ReadWriteByte(0);
 
-	id=SPI_SendByte(0);
+	id=SPI1_ReadWriteByte(0);
 	id=id<<8;
-	id=id+SPI_SendByte(0);
-	SPI_FLASH_H;
+	id=id+SPI1_ReadWriteByte(0);
+	SST25VFXX_CS = 1;
 
 	return id;
 }
@@ -71,12 +91,12 @@ void Section_Dell(u32 addr)
 	WriteStatus_Enable();//使能写状态寄存器
 	WriteEnable();//写使能
 
-	SPI_FLASH_L;
-	SPI_SendByte(0x20);
-	SPI_SendByte((addr&0xFF0000)>>16);//发送地址
-	SPI_SendByte((addr&0xFF00)>>8);
-	SPI_SendByte(addr&0xFF);
-	SPI_FLASH_H;
+	SST25VFXX_CS = 0;
+	SPI1_ReadWriteByte(0x20);
+	SPI1_ReadWriteByte((addr&0xFF0000)>>16);//发送地址
+	SPI1_ReadWriteByte((addr&0xFF00)>>8);
+	SPI1_ReadWriteByte(addr&0xFF);
+	SST25VFXX_CS = 1;
 	Check_Busy();//忙检测
 }
 
@@ -90,21 +110,21 @@ void Section_Read(u32 addr,u8 *buffer,u16 Size)
 {
 	u16 i=0;
 
-	SPI_FLASH_L;
-	SPI_SendByte(0x0B);
+	SST25VFXX_CS = 0;
+	SPI1_ReadWriteByte(0x0B);
 	//发送读取的地址
-	SPI_SendByte((addr&0xFF0000)>>16);
-	SPI_SendByte((addr&0xFF00)>>8);
-	SPI_SendByte(addr&0xFF);
-	SPI_SendByte(0); //发送的值任意
+	SPI1_ReadWriteByte((addr&0xFF0000)>>16);
+	SPI1_ReadWriteByte((addr&0xFF00)>>8);
+	SPI1_ReadWriteByte(addr&0xFF);
+	SPI1_ReadWriteByte(0); //发送的值任意
 
 	while(i<Size)
 	{
 		//读取数据
-		buffer[i]=SPI_SendByte(0);
+		buffer[i]=SPI1_ReadWriteByte(0);
 		i++;
 	}
-	SPI_FLASH_H;
+	SST25VFXX_CS = 1;
 }
 
 /*
@@ -122,24 +142,24 @@ void Section_Write(u32 addr,u8 *buffer,u16 Size)
 	WriteStatus_Enable();//使能写状态寄存器
 	WriteEnable();//写使能
 
-	SPI_FLASH_L;
-	SPI_SendByte(0xAD);
-	SPI_SendByte((addr&0xFF0000)>>16); //发送24位地址
-	SPI_SendByte((addr&0xFF00)>>8);
-	SPI_SendByte(addr&0xFF);
-	SPI_SendByte(buffer[0]);
-	SPI_SendByte(buffer[1]);
-	SPI_FLASH_H;
+	SST25VFXX_CS = 0;
+	SPI1_ReadWriteByte(0xAD);
+	SPI1_ReadWriteByte((addr&0xFF0000)>>16); //发送24位地址
+	SPI1_ReadWriteByte((addr&0xFF00)>>8);
+	SPI1_ReadWriteByte(addr&0xFF);
+	SPI1_ReadWriteByte(buffer[0]);
+	SPI1_ReadWriteByte(buffer[1]);
+	SST25VFXX_CS = 1;
 
 	i=2;
 	while(i<Size)
 	{
 		delay_us(10);
-		SPI_FLASH_L;
-		SPI_SendByte(0xAD);
-		SPI_SendByte(buffer[i++]);
-		SPI_SendByte(buffer[i++]);
-		SPI_FLASH_H;
+		SST25VFXX_CS = 0;
+		SPI1_ReadWriteByte(0xAD);
+		SPI1_ReadWriteByte(buffer[i++]);
+		SPI1_ReadWriteByte(buffer[i++]);
+		SST25VFXX_CS = 1;
 	}
 
 	delay_us(10);
@@ -153,9 +173,9 @@ void Section_All_dell(void)
 	WriteStatus_Enable();//使能写状态寄存器
 	WriteEnable();//写使能
 
-	SPI_FLASH_L;
-	SPI_SendByte(0x60);
-	SPI_FLASH_H;
+	SST25VFXX_CS = 0;
+	SPI1_ReadWriteByte(0x60);
+	SST25VFXX_CS = 1;
 	Check_Busy();
 }
 
