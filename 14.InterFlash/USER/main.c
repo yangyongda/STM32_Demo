@@ -18,7 +18,8 @@ const u8 TEXT_Buffer[]={"STM32F103 FLASH TEST"};
 int main(void)
 {
 	u8 datatemp[SIZE];	 
-	delay_init();	    //延时函数初始化	  
+	delay_init();	    //延时函数初始化	
+	uart_init(115200);
 
 	STMFLASH_Write(FLASH_SAVE_ADDR,(u16*)TEXT_Buffer,SIZE);
 	delay_ms(1000);
@@ -26,7 +27,7 @@ int main(void)
 	 
 	while(1)
 	{
-		printf("%s", datatemp);
+		printf("%s\r\n", datatemp);
 		delay_ms(1000);
 	}
 }

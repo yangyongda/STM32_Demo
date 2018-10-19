@@ -16,7 +16,7 @@ void SST25VF16B_Init(void)
  
   SST25VFXX_CS=1;				//SPI FLASH不选中
 	SPI1_Init();		   	//初始化SPI
-	SPI1_SetSpeed(SPI_BaudRatePrescaler_2);//设置为18M时钟,高速模式
+	SPI1_SetSpeed(SPI_BaudRatePrescaler_4);//设置为18M时钟,高速模式
 
 } 
 
@@ -25,7 +25,8 @@ u8 Read_Status(void)
 {
 	u8 dt;
 	SST25VFXX_CS = 0;  //自定义宏 ,开始SPI通信
-	dt = SPI1_ReadWriteByte(0x05);	//发送指令,并返回数据
+	SPI1_ReadWriteByte(0x05);
+	dt = SPI1_ReadWriteByte(0);	
 	SST25VFXX_CS = 1;
 	return dt;
 }
