@@ -61,10 +61,6 @@ int main(void)
 				printf("非FLASH应用程序,无法执行!\r\n");
 			}		
 		}
-		else
-		{
-			printf("没有可以更新的固件!\r\n");
-		}
 	}
 }
 
