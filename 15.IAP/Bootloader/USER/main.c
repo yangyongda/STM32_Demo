@@ -61,6 +61,21 @@ int main(void)
 				printf("非FLASH应用程序,无法执行!\r\n");
 			}		
 		}
+		
+		if(gotoApp == 1)
+		{
+			gotoApp = 0;
+			//更新结束后跳到app进行执行
+			printf("开始执行FLASH用户代码!!\r\n");
+			if(((*(vu32*)(FLASH_APP1_ADDR+4))&0xFF000000)==0x08000000)//判断是否为0X08XXXXXX.
+			{	 
+				iap_load_app(FLASH_APP1_ADDR);//执行FLASH APP代码
+			}
+			else 
+			{
+				printf("非FLASH应用程序,无法执行!\r\n");
+			}		
+		}
 	}
 }
 
