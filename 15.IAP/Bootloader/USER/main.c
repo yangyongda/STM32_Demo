@@ -19,6 +19,7 @@ int main(void)
 {	 
 	u16 oldcount=0;				//老的串口接收数据值
 	u16 applenth=0;				//接收到的app代码长度
+	u8 datatemp[10];
 	
 	delay_init();	    //延时函数初始化	  
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); //设置NVIC中断分组2:2位抢占优先级，2位响应优先级 
@@ -48,7 +49,8 @@ int main(void)
 			updateFlag = 0;	//清除更新标志位
 			printf("开始更新固件...\r\n");	
 			iap_write_appbin(FLASH_APP1_ADDR,USART_RX_BUF,applenth);//更新FLASH代码   
-			printf("固件更新完成!\r\n");	
+			printf("固件更新完成!\r\n");
+			
 			
 			//更新结束后跳到app进行执行
 			printf("开始执行FLASH用户代码!!\r\n");

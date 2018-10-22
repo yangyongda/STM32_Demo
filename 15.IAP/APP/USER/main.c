@@ -13,11 +13,14 @@ GPIO输出
 int main(void)
 {	
 	SCB->VTOR = FLASH_BASE | 0x10000; /* Vector Table Relocation in Internal FLASH. */
-	
+
 	delay_init();	    //延时函数初始化	  
 	LED_Init();		  	//初始化与LED连接的硬件接口
+
+	
 	while(1)
 	{
+		
 		LED0=0;	//亮
 		LED1=1;	//灭
 		LED2=1;	//灭
