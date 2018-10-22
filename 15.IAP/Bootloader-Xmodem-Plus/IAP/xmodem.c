@@ -25,8 +25,7 @@ u8 xmodemReceive(u8 checkType)
 	}
 
 
-	while(1)
-	{
+
 		TIM3_Start(9999);
 		while(ch == 0)
 		{
@@ -88,10 +87,9 @@ u8 xmodemReceive(u8 checkType)
 		{
 			USART_SendData(USART1, ACK);
 			return 0;
-		}
-		
-	}
+		}	
 	
+		return 0;
 }
 
 /**************************************************************************************************
