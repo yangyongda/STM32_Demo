@@ -17,6 +17,7 @@ u8 xmodemReceive(u8 checkType)
 
 	u8 ch = 0;
 	u8 i;
+	u16 crc;
 	
 	if(checkType==CHECK_CRC){//CRC
 		g_CheckType='C';
@@ -27,15 +28,16 @@ u8 xmodemReceive(u8 checkType)
 
 
 		TIM3_Start(9999);
-		while(ch == 0)
-		{
+		do{
 			USART_SendData(USART1, g_CheckType);
+			delay_ms(1000);
+			delay_ms(1000);
 			delay_ms(1000);
 			if(g_Time_out_Count > TIME_OUT)
 				break;
 			
 			ch = readChar();
-		}
+		}while(ch == 0);
 		g_Time_out_Count = 0;
 		TIM3_Stop();
 		
@@ -44,16 +46,20 @@ u8 xmodemReceive(u8 checkType)
 			dataPkt.m_SOH = SOH;
 			dataPkt.m_PN = readChar();
 			dataPkt.m_PN_R = readChar();
+			
 			if(dataPkt.m_PN == ~dataPkt.m_PN_R)
 			{
+				
 				for(i = 0; i < DATA_LEN; i++)
 				{
 					dataPkt.m_Data[i] = readChar();
 				}
 				
 				dataPkt.check[0] = readChar();
+				dataPkt.check[1] = readChar();
+				crc = ((dataPkt.check[0]<<8)|dataPkt.check[1]);
 				
-				if(dataPkt.check[0] == checkSum(((u8*)&dataPkt)))
+				if( crc == checkCrc(((u8*)&dataPkt), PKT_LEN - 2))
 				{
 					iap_write_appbin(FLASH_APP1_ADDR + (dataPkt.m_PN - 1)*DATA_LEN ,((u8*)&dataPkt),DATA_LEN);//更新FLASH代码  
 					USART_SendData(USART1, ACK);
@@ -119,6 +125,37 @@ u8 checkSum(u8* buf)
 		return 1;
 	}
 }
+
+/**************************************************************************************************
+** 函数名: checkCrc
+** 功能描述: 计算CRC校验
+** 输入参数: buf: 数据包首地址
+** 输出参数: 无
+** 返回值: 0：校验通过， 1:校验失败
+** 其他说明:无
+***************************************************************************************************/
+u16 checkCrc(u8* buf, u16 size)
+{
+	u16 wCRCin = 0x0000;
+  u16 wCPoly = 0x1021;
+  u8  wChar = 0;
+  int i;
+	
+  while (size--) 	
+  {
+        wChar = *(buf++);
+        wCRCin ^= (wChar << 8);
+        for( i = 0;i < 8;i++)
+        {
+          if(wCRCin & 0x8000)
+            wCRCin = (wCRCin << 1) ^ wCPoly;
+          else
+            wCRCin = wCRCin << 1;
+        }
+  }
+  return wCRCin;
+}
+
 
 u8 readChar(void)
 {

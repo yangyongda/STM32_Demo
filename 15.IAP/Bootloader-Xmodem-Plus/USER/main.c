@@ -31,7 +31,7 @@ int main(void)
 		if(updateFlag == 1)
 		{
 			updateFlag = 0;
-			xmodemReceive(1);
+			xmodemReceive(2);
 		}
 		
 		if(gotoApp == 1)
