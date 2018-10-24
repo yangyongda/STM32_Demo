@@ -44,12 +44,14 @@ u8 xmodemReceive(u8 checkType)
 		while(ch == SOH)
 		{
 			dataPkt.m_SOH = SOH;
-			dataPkt.m_PN = readChar();
-			dataPkt.m_PN_R = readChar();
+			//dataPkt.m_PN = readChar();
+			//dataPkt.m_PN_R = readChar();
+			readBuffer(&(dataPkt.m_PN), 1);
+			readBuffer(&(dataPkt.m_PN_R), 1);
 			
-			if(dataPkt.m_PN == ~dataPkt.m_PN_R)
+			if(dataPkt.m_PN == (u8)(~dataPkt.m_PN_R))
 			{
-				
+				/*
 				for(i = 0; i < DATA_LEN; i++)
 				{
 					dataPkt.m_Data[i] = readChar();
@@ -57,6 +59,9 @@ u8 xmodemReceive(u8 checkType)
 				
 				dataPkt.check[0] = readChar();
 				dataPkt.check[1] = readChar();
+				*/
+				readBuffer(dataPkt.m_Data, 130);
+				
 				crc = ((dataPkt.check[0]<<8)|dataPkt.check[1]);
 				
 				if( crc == checkCrc(((u8*)&dataPkt), PKT_LEN - 2))
@@ -66,7 +71,10 @@ u8 xmodemReceive(u8 checkType)
 				}
 				else
 				{
-					USART_SendData(USART1, NAK);
+					printf("%d\r\n",crc);
+					delay_ms(5);
+					printf("%d\r\n",checkCrc(((u8*)&dataPkt), PKT_LEN - 2));
+					//USART_SendData(USART1, NAK);
 				}
 				
 			}
@@ -159,16 +167,40 @@ u16 checkCrc(u8* buf, u16 size)
 
 u8 readChar(void)
 {
-	if(READ_CNT <= USART_RX_CNT)
+	if(READ_CNT < USART_RX_CNT)
 	{
 		u8 ch = USART_RX_BUF[READ_CNT++];
 		return ch;
 	}
 	else
 	{
+		return 0;
+	}
+	
+	if(READ_CNT == PKT_LEN)
+	{
 		USART_RX_CNT = 0;
 		READ_CNT = 0;
-		return 0;
 	}
 }
 
+u16 readBuffer(u8* buffer, u16 count)
+{
+	u16 read_cnt = 0;
+	TIM3_Start(9999);
+	while(read_cnt < count)
+	{
+		if(READ_CNT < USART_RX_CNT)	//收到数据了
+		{
+			buffer[read_cnt] = readChar();
+			read_cnt++;
+		}
+		
+		if(g_Time_out_Count > 2)
+			break;
+	}
+	g_Time_out_Count = 0;
+	TIM3_Stop();
+	
+	return read_cnt;
+}

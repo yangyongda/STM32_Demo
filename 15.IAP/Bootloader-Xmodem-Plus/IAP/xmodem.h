@@ -42,6 +42,7 @@ u8 checkSum(u8* buf);
 u16 checkCrc(u8* buf, u16 size);
 u8 xmodemReceive(u8 checkType);
 u8 readChar(void);
+u16 readBuffer(u8* buffer, u16 count);
 
 #endif
 
