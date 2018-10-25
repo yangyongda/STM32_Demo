@@ -16,7 +16,6 @@ u8 xmodemReceive(u8 checkType)
 {
 
 	u8 ch = 0;
-	u8 i;
 	u16 crc;
 	
 	if(checkType==CHECK_CRC){//CRC
@@ -64,17 +63,14 @@ u8 xmodemReceive(u8 checkType)
 				
 				crc = ((dataPkt.check[0]<<8)|dataPkt.check[1]);
 				
-				if( crc == checkCrc(((u8*)&dataPkt), PKT_LEN - 2))
+				if( crc == checkCrc(((u8*)&(dataPkt.m_Data)), PKT_LEN - 5))
 				{
-					iap_write_appbin(FLASH_APP1_ADDR + (dataPkt.m_PN - 1)*DATA_LEN ,((u8*)&dataPkt),DATA_LEN);//更新FLASH代码  
+					iap_write_appbin(FLASH_APP1_ADDR + (dataPkt.m_PN - 1)*DATA_LEN ,((u8*)&(dataPkt.m_Data)),DATA_LEN);//更新FLASH代码  
 					USART_SendData(USART1, ACK);
 				}
 				else
 				{
-					printf("%d\r\n",crc);
-					delay_ms(5);
-					printf("%d\r\n",checkCrc(((u8*)&dataPkt), PKT_LEN - 2));
-					//USART_SendData(USART1, NAK);
+					USART_SendData(USART1, NAK);
 				}
 				
 			}
@@ -174,14 +170,14 @@ u8 readChar(void)
 	}
 	else
 	{
+		if(READ_CNT == PKT_LEN)
+		{
+			USART_RX_CNT = 0;
+			READ_CNT = 0;
+		}
 		return 0;
 	}
 	
-	if(READ_CNT == PKT_LEN)
-	{
-		USART_RX_CNT = 0;
-		READ_CNT = 0;
-	}
 }
 
 u16 readBuffer(u8* buffer, u16 count)
