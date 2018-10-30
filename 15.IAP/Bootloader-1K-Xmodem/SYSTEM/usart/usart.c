@@ -60,7 +60,8 @@ int GetKey (void)  {
 //串口1中断服务程序
 //注意,读取USARTx->SR能避免莫名其妙的错误   	
 u8 USART_RX_BUF[USART_REC_LEN] __attribute__ ((at(0X20001000)));//接收缓冲,最大USART_REC_LEN个字节,起始地址为0X20001000. 
-u16 USART_RX_CNT=0;			//接收的字节数	 
+u16 USART_RX_CNT=0;			//接收的字节数
+u16 READ_CNT = 0;			//读取字节数
 //接收状态
 //bit15，	接收完成标志
 //bit14，	接收到0x0d
@@ -116,47 +117,11 @@ void USART1_IRQHandler(void)
 	if(USART1->SR&(1<<5))//接收到数据
 	{	 
 		res=USART1->DR; 
-		/*
+		
 		if(USART_RX_CNT<USART_REC_LEN)
 		{
 			USART_RX_BUF[USART_RX_CNT]=res;
 			USART_RX_CNT++;			 									     
-		}
-		*/
-		USART_RX_CNT++;		
-		
-		if(res == SOH && dataPkt.m_SOH != SOH)
-		{
-			dataPkt.m_SOH = SOH;
-			USART_RX_CNT = 1;		
-		}
-		
-		if(USART_RX_CNT == 1 && res == EOT)
-		{
-			USART_SendData(USART1, ACK);
-			gotoApp = 1;
-		}
-		
-		if(dataPkt.m_SOH == SOH)
-		{
-			if(USART_RX_CNT == 2 && res == PackageNo)
-			{
-				dataPkt.m_PN = res;
-			}
-			else if(USART_RX_CNT == 3 && (~res) == dataPkt.m_PN)
-			{
-				dataPkt.m_PN_R = res;
-			}
-			else if(PackageNo == dataPkt.m_PN && dataPkt.m_PN == ~dataPkt.m_PN_R)
-			{
-				if(USART_RX_CNT < PKT_LEN)
-					dataPkt.m_Data[USART_RX_CNT-4] = res;
-				else if(USART_RX_CNT == PKT_LEN)
-				{
-					dataPkt.check[0] = res;
-					RecSuccess = 1;
-				}
-			}
 		}
 		
 	}

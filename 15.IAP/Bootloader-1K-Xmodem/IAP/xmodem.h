@@ -5,6 +5,7 @@
 #include "timer.h"
 #include "string.h"
 #include "iap.h"
+#include "delay.h"
 
 #define SOH  0x01
 #define STX  0x02
@@ -18,9 +19,9 @@
 #define CHECK_SUM		0x01
 #define CHECK_CRC		0x02
 
-#define CHECK_LEN		CHECK_SUM	//检验占用的字节数
-#define PKT_LEN 132	//数据包长度
-#define DATA_LEN 128 //数据长度
+#define CHECK_LEN		CHECK_CRC	//检验占用的字节数
+#define PKT_LEN 1029	//数据包长度
+#define DATA_LEN 1024 //数据长度
 #define TIME_OUT 60		//超时时间60s
 
 //数据包
@@ -38,7 +39,10 @@ extern DATA_PACKAGE dataPkt;
 
 
 u8 checkSum(u8* buf);
+u16 checkCrc(u8* buf, u16 size);
 u8 xmodemReceive(u8 checkType);
+u8 readChar(void);
+u16 readBuffer(u8* buffer, u16 count);
 
 #endif
 

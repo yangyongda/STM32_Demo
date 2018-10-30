@@ -66,7 +66,7 @@ void EXTI1_IRQHandler(void)
 	delay_ms(10);//消抖
 	if(KEY2 == 0)
 	{
-		//gotoApp = 1;	//进入app
+		gotoApp = 1;	//进入app
 	}
 	EXTI_ClearITPendingBit(EXTI_Line1);  //清除LINE1上的中断标志位  
 	

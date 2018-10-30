@@ -23,12 +23,15 @@ int main(void)
 	KEY_Init();
 	EXTIX_Init();
 	uart_init(115200);	//串口初始化为115200
+	TIM3_Int_Init(9999, 7199);
+	
 	
 	while(1)
 	{
 		if(updateFlag == 1)
 		{
-			xmodemReceive(1);
+			updateFlag = 0;
+			xmodemReceive(2);
 		}
 		
 		if(gotoApp == 1)
