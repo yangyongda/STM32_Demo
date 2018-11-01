@@ -520,11 +520,6 @@
               <FileType>1</FileType>
               <FilePath>..\IAP\xmodem.c</FilePath>
             </File>
-            <File>
-              <FileName>crc16.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\IAP\crc16.c</FilePath>
-            </File>
           </Files>
         </Group>
       </Groups>

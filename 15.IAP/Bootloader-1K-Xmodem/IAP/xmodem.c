@@ -65,7 +65,7 @@ u8 xmodemReceive(u8 checkType)
 				
 				if( crc == checkCrc(((u8*)&(dataPkt.m_Data)), PKT_LEN - 5))
 				{
-					iap_write_appbin(FLASH_APP1_ADDR + (dataPkt.m_PN - 1)*DATA_LEN ,((u8*)&(dataPkt.m_Data)),DATA_LEN);//更新FLASH代码  
+					iap_write_appbin(FLASH_APP1_ADDR + (dataPkt.m_PN - 1)*DATA_LEN ,((u8*)(dataPkt.m_Data)),DATA_LEN);//更新FLASH代码  
 					USART_SendData(USART1, ACK);
 				}
 				else
