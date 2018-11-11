@@ -620,7 +620,7 @@ void RC522_Init(void)
  
   RC522_CS=1;				
 	SPI2_Init();		   	//SPI2
-	SPI2_SetSpeed(SPI_BaudRatePrescaler_4);//18M
+	//SPI2_SetSpeed(SPI_BaudRatePrescaler_4);//18M
 
 } 
 
