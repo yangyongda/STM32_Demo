@@ -90,7 +90,7 @@ void createTcpOrUdp(u8 type, char* remoteIP, u16 remotePort, u16 localPort)
 	}
 	else if(type == 2)
 	{
-		sprintf(buffer, "%s=1,%d", CONFIG_SERVER,localPort);
+		sprintf(buffer, "%s=1,%d\r\n", CONFIG_SERVER,localPort);
 	}
 	else if(type == 3)
 	{
